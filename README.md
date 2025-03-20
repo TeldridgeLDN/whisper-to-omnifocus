@@ -1,78 +1,81 @@
 # 🎙️ Whisper to OmniFocus
 
-Transform voice commands into structured OmniFocus tasks using OpenAI's Whisper speech recognition. This integration brings powerful voice automation to your task management workflow.
+A powerful integration that converts voice commands into OmniFocus tasks using OpenAI's Whisper speech recognition.
 
 ## ✨ Features
 
-- 🗣️ **Natural Speech Recognition** - Powered by OpenAI's Whisper AI
-- 📋 **Rich Task Creation** - Projects, tags, due dates, defer dates, and notes
-- 🔄 **Seamless Integration** - Works with OmniFocus on macOS and iOS via iCloud
-- 🎯 **Smart Parsing** - Understands natural language commands and dates
-- 🚀 **Quick Capture** - Record tasks on the go with Shortcuts integration
-- 🔔 **Instant Feedback** - Real-time notifications when tasks are created
+- 🎙️ **Voice to Task**: Record voice commands and instantly create OmniFocus tasks
+- 🔄 **Offline Support**: Record tasks without network connection
+- ⚡ **Automatic Sync**: Process offline recordings when back online
+- 🎯 **Smart Parsing**: Automatically extracts task details from voice commands
+- 🔍 **Flexible Commands**: Support for projects, due dates, defer dates, flags, and tags
+- 📱 **iOS Integration**: Works seamlessly with iOS Shortcuts
+- 🔄 **Background Processing**: Automatic task creation in OmniFocus
 
 ## 🚀 Quick Start
 
-1. Clone this repository:
-```bash
-git clone https://github.com/TeldridgeLDN/whisper-to-omnifocus.git
-cd whisper-to-omnifocus
-```
+1. **Install Dependencies**:
+   ```bash
+   ./install.sh
+   ```
 
-2. Run the setup script:
-```bash
-./scripts/setup.sh
-```
+2. **Set Up Shortcuts**:
+   - Install the "Voice to Task" shortcut for online use
+   - Install the "Offline Voice to Task" shortcut for offline recording
+   - Follow the setup guide in `docs/shortcuts.md`
 
-3. Import the shortcut and configure paths (see [configuration guide](docs/configuration.md))
+3. **Configure Automator**:
+   - Set up the folder action to watch the temp directory
+   - Follow the setup guide in `docs/configuration.md`
+
+4. **Start Processing**:
+   ```bash
+   ./scripts/process_icloud_recording.py
+   ```
 
 ## 💡 Example Commands
 
-Simple task:
+### Basic Task
 ```
-"Buy groceries"
-```
-
-Task with project and due date:
-```
-"Buy groceries hashtag project Errands hashtag due tomorrow"
+Create a task to buy groceries tomorrow
 ```
 
-Complex task:
+### Complex Task
 ```
-"Schedule team meeting hashtag project Work hashtag due monday 2pm hashtag tag meetings,important hashtag note Prepare quarterly slides"
+Create a task to finish the project report due next Friday at 5pm in the Work project with high priority and tags for documentation and urgent
 ```
 
 ## 🛠️ Technologies
 
-- OpenAI Whisper (Speech Recognition)
-- OmniFocus URL Schemes
-- macOS Shortcuts & Automator
-- Python with Natural Language Processing
-- iCloud Integration
+- Python 3.10+
+- OpenAI Whisper
+- macOS Shortcuts
+- Automator
+- OmniFocus URL Scheme
 
 ## 📋 Requirements
 
-- macOS (Primary platform)
-- Python 3.7+
-- OmniFocus Pro
-- iCloud enabled for OmniFocus
+- macOS 13.0 or later
+- iOS 16.0 or later (for Shortcuts)
+- Python 3.10 or later
+- OmniFocus 3
+- iCloud Drive enabled
 
 ## 📱 Platform Support
 
-- macOS (Primary)
-- iOS (via iCloud sync)
-- Requires OmniFocus Pro
+- macOS (primary)
+- iOS (via Shortcuts)
 
 ## 📚 Documentation
 
 - [Configuration Guide](docs/configuration.md)
-- [Example Commands](examples/example_commands.md)
-- [Troubleshooting](docs/troubleshooting.md)
+- [Shortcuts Setup](docs/shortcuts.md)
+- [Example Commands](docs/example_commands.md)
+- [Offline Guide](docs/offline_guide.md)
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📜 License
 
@@ -80,12 +83,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- [OpenAI Whisper](https://github.com/openai/whisper) for the amazing speech recognition
-- [The Omni Group](https://www.omnigroup.com/) for OmniFocus and their URL scheme documentation
-- All contributors and users of this project
+- OpenAI for the Whisper model
+- OmniGroup for OmniFocus
+- Apple for Shortcuts and Automator
 
 ## 🔗 Links
 
-- [Project Homepage](https://github.com/TeldridgeLDN/whisper-to-omnifocus)
-- [Issue Tracker](https://github.com/TeldridgeLDN/whisper-to-omnifocus/issues)
-- [OmniFocus URL Scheme Documentation](https://inside.omnifocus.com/url-schemes) 
+- [OpenAI Whisper](https://github.com/openai/whisper)
+- [OmniFocus URL Scheme](https://inside.omnifocus.com/url-schemes)
+- [macOS Shortcuts](https://support.apple.com/guide/shortcuts-mac/welcome/mac)
+- [Automator Guide](https://support.apple.com/guide/automator/welcome/mac) 
