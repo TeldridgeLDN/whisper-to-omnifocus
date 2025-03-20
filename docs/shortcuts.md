@@ -33,6 +33,39 @@ This guide explains how to set up the necessary shortcuts for the Whisper to Omn
    - With attributes: "Task description hashtag project Work hashtag due tomorrow"
 3. Wait for the notification confirming processing
 
+## Offline Voice Recording Shortcut
+
+### Setup Instructions
+
+1. Open the Shortcuts app
+2. Create a new shortcut named "Offline Voice to Task"
+3. Add these actions:
+
+```
+1. Record Audio
+   - Show Recording Interface: On
+   - Save to Variable: "Recording"
+
+2. Save File
+   - File: Recording (from previous step)
+   - Destination: whisper-local folder
+   - Name: "recording_{random number between 1000-9999}.m4a"
+
+3. Show Notification
+   - Title: "Recording Saved"
+   - Message: "Recording saved locally. Will process when you return home."
+```
+
+### Usage
+
+1. Use this shortcut when you're not on your home network
+2. Record your task as usual
+3. The recording will be saved locally on your device
+4. When you return home and connect to your network:
+   - The sync process will automatically run
+   - Your recordings will be processed
+   - Tasks will be created in OmniFocus
+
 ## Voice Memo to Task Shortcut
 
 ### Setup Instructions
@@ -95,6 +128,31 @@ This guide explains how to set up the necessary shortcuts for the Whisper to Omn
    - System Settings → Keyboard → Shortcuts
    - Add shortcut for quick access
 
+## Offline Workflow
+
+### When Away from Home Network
+
+1. Use the "Offline Voice to Task" shortcut
+2. Record your task as normal
+3. The recording will be saved locally
+4. You'll receive a confirmation notification
+
+### When Returning Home
+
+1. Connect to your home network
+2. The sync process will automatically:
+   - Detect new recordings
+   - Process them using Whisper
+   - Create tasks in OmniFocus
+   - Clean up processed files
+
+### Manual Sync
+
+If automatic sync doesn't run, you can manually trigger it:
+1. Open Terminal
+2. Navigate to the project directory
+3. Run: `./scripts/sync_recordings.py`
+
 ## Troubleshooting
 
 ### Common Issues
@@ -113,6 +171,11 @@ This guide explains how to set up the necessary shortcuts for the Whisper to Omn
    - Check OmniFocus installation
    - Verify URL scheme handling
    - Check process_recording.py logs
+
+4. **Offline Sync Issues**
+   - Verify local storage permissions
+   - Check network connectivity
+   - Review sync logs
 
 ### Solutions
 
@@ -134,6 +197,12 @@ This guide explains how to set up the necessary shortcuts for the Whisper to Omn
    - Verify OmniFocus installation
    - Review log files in whisper-logs
 
+4. **Sync Problems**
+   - Check local storage space
+   - Verify network connection
+   - Review sync logs
+   - Try manual sync
+
 ## Best Practices
 
 1. **Recording Quality**
@@ -150,6 +219,13 @@ This guide explains how to set up the necessary shortcuts for the Whisper to Omn
    - Regularly check logs
    - Update shortcuts as needed
    - Clean temp folders periodically
+   - Monitor local storage space
+
+4. **Offline Usage**
+   - Check available storage before recording
+   - Use consistent naming for offline recordings
+   - Verify sync after returning home
+   - Keep track of pending recordings
 
 ## Advanced Configuration
 
@@ -180,4 +256,9 @@ This guide explains how to set up the necessary shortcuts for the Whisper to Omn
 2. **Custom URL Schemes**
    - Define custom parameters
    - Add special handling
-   - Create workflow triggers 
+   - Create workflow triggers
+
+3. **Offline Storage**
+   - Configure local storage location
+   - Set up sync triggers
+   - Monitor storage usage 
