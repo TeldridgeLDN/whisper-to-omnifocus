@@ -8,11 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Offline recording support with local storage
-- Sync mechanism for processing offline recordings
-- New "Offline Voice to Task" shortcut
-- Documentation for offline workflow
-- Sync script for processing pending recordings
+- Offline voice recording support with local storage
+- New "Offline Voice to Task" shortcut for recording without network connection
+- Automatic sync mechanism for processing offline recordings
+- Launch agent for continuous monitoring of new recordings
+- Detailed offline recording guide with step-by-step instructions
+
+### Fixed
+- Fixed path resolution for process_recording.py script
+- Added missing whisper package dependency
+- Improved error handling and logging in processing scripts
+- Fixed file cleanup after successful processing
+
+### Changed
+- Updated documentation to include offline workflow
+- Enhanced logging for better debugging
+- Improved error messages and handling
 
 ## [0.1.0] - 2024-03-21
 
