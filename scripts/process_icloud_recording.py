@@ -378,12 +378,12 @@ class FileLock:
 def process_via_ssh(audio_filename):
     """Process an audio file that's already on the remote server"""
     try:
+        # Generate unique names for transcript and URL files
+        base_name = os.path.splitext(audio_filename)[0]
+        transcript_file = f"{base_name}_transcript.txt"
+        url_file = os.path.join(TEMP_DIR, f"{base_name}_url.txt")
+        
         with FileLock(LOCK_FILE):
-            # Generate unique names for transcript and URL files
-            base_name = os.path.splitext(audio_filename)[0]
-            transcript_file = f"{base_name}_transcript.txt"
-            url_file = os.path.join(TEMP_DIR, f"{base_name}_url.txt")
-            
             # Process the audio file on the remote server
             process_cmd = (
                 f"export PATH=$HOME/bin:$PATH && "  # Add ffmpeg to PATH
@@ -419,19 +419,19 @@ def process_via_ssh(audio_filename):
             # Process the transcript to create OmniFocus URL
             if not process_transcript_to_url(os.path.join(TEMP_DIR, transcript_file), url_file):
                 return False
-            
-            # Clean up all files
-            local_files = [
-                os.path.join(TEMP_DIR, transcript_file),
-                url_file
-            ]
-            remote_files = [
-                os.path.join(TEMP_DIR, audio_filename),
-                os.path.join(TEMP_DIR, transcript_file)
-            ]
-            cleanup_files(local_files, remote_files)
-            
-            return True
+        
+        # Clean up all files after releasing the lock
+        local_files = [
+            os.path.join(TEMP_DIR, transcript_file),
+            url_file
+        ]
+        remote_files = [
+            os.path.join(TEMP_DIR, audio_filename),
+            os.path.join(TEMP_DIR, transcript_file)
+        ]
+        cleanup_files(local_files, remote_files)
+        
+        return True
             
     except Exception as e:
         logging.error(f"Error processing via SSH: {str(e)}")
