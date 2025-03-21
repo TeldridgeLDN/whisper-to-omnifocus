@@ -494,12 +494,13 @@ def main():
                         
                         if process_via_ssh(audio_filename):
                             logging.info("Processing complete")
-                            # Cleanup local temp file
-                            try:
-                                os.remove(temp_audio_file)
-                                logging.info("Removed local temp file")
-                            except Exception as e:
-                                logging.error(f"Failed to remove local temp file: {str(e)}")
+                            # Cleanup local temp file if it still exists
+                            if os.path.exists(temp_audio_file):
+                                try:
+                                    os.remove(temp_audio_file)
+                                    logging.info("Removed local temp file")
+                                except Exception as e:
+                                    logging.error(f"Failed to remove local temp file: {str(e)}")
                         else:
                             logging.error("Processing failed")
                             # Move file back to iCloud if processing failed
