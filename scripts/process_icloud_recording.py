@@ -394,7 +394,14 @@ def process_via_ssh(audio_filename):
             )
             success, output = run_ssh_command(process_cmd)
             if not success:
-                logging.error(f"Transcription output: {output}")
+                logging.error(f"Transcription failed: {output}")
+                return False
+            
+            # Verify the transcript file exists on remote server
+            check_cmd = f"test -f '{os.path.join(TEMP_DIR, transcript_file)}' && echo 'exists'"
+            success, output = run_ssh_command(check_cmd)
+            if not success or 'exists' not in output:
+                logging.error("Transcript file not found on remote server")
                 return False
             
             # Copy the transcript back
@@ -414,6 +421,11 @@ def process_via_ssh(audio_filename):
                 logging.error(f"SCP failed retrieving transcript: {str(e)}")
                 if e.stderr:
                     logging.error(f"SCP stderr: {e.stderr}")
+                return False
+            
+            # Verify local transcript file exists and has content
+            if not os.path.exists(os.path.join(TEMP_DIR, transcript_file)):
+                logging.error("Local transcript file not found after SCP")
                 return False
             
             # Process the transcript to create OmniFocus URL
@@ -460,6 +472,7 @@ def main():
             # First, check iCloud directory for offline recordings
             for audio_file in glob.glob(AUDIO_FILE_PATTERN):
                 logging.info(f"Found audio file in iCloud: {audio_file}")
+                temp_audio_file = None
                 
                 # Check if the file is still being written to
                 try:
@@ -480,6 +493,10 @@ def main():
                         # Get just the filename for the remote path
                         audio_filename = os.path.basename(temp_audio_file)
                         
+                        # Verify the file exists in temp directory
+                        if not os.path.exists(temp_audio_file):
+                            raise Exception("File not found in temp directory after move")
+                        
                         # Copy to remote server
                         scp_cmd = [
                             "scp",
@@ -490,21 +507,35 @@ def main():
                             temp_audio_file,
                             f"{SSH_USER}@{SSH_HOST}:{os.path.join(TEMP_DIR, audio_filename)}"
                         ]
-                        subprocess.run(scp_cmd, check=True, capture_output=True, text=True)
+                        
+                        try:
+                            subprocess.run(scp_cmd, check=True, capture_output=True, text=True)
+                        except subprocess.CalledProcessError as e:
+                            logging.error(f"SCP failed copying audio file: {str(e)}")
+                            if e.stderr:
+                                logging.error(f"SCP stderr: {e.stderr}")
+                            raise
+                        
+                        # Verify file exists on remote server
+                        check_cmd = f"test -f '{os.path.join(TEMP_DIR, audio_filename)}' && echo 'exists'"
+                        success, output = run_ssh_command(check_cmd)
+                        if not success or 'exists' not in output:
+                            raise Exception("Audio file not found on remote server after SCP")
                         
                         if process_via_ssh(audio_filename):
                             logging.info("Processing complete")
-                            # The temp file is already cleaned up by cleanup_files in process_via_ssh
                         else:
-                            logging.error("Processing failed")
-                            # Move file back to iCloud if processing failed
+                            raise Exception("Processing failed")
+                            
+                    except Exception as e:
+                        logging.error(f"Error during processing: {str(e)}")
+                        # Move file back to iCloud if it exists in temp
+                        if temp_audio_file and os.path.exists(temp_audio_file):
                             try:
                                 shutil.move(temp_audio_file, audio_file)
                                 logging.info("Moved file back to iCloud for retry")
-                            except Exception as e:
-                                logging.error(f"Failed to move file back to iCloud: {str(e)}")
-                    except Exception as e:
-                        logging.error(f"Error during processing: {str(e)}")
+                            except Exception as move_error:
+                                logging.error(f"Failed to move file back to iCloud: {str(move_error)}")
                 else:
                     logging.info("Not on home network, leaving file in iCloud for later")
             
