@@ -252,7 +252,45 @@ def process_transcript_to_url(transcript_file, url_file):
     try:
         # Read the transcript
         with open(transcript_file, 'r') as f:
-            transcript = f.read()
+            transcript = f.read().strip()
+        
+        # Check if this exact transcript was recently processed (within last minute)
+        recent_transcripts_file = os.path.join(TEMP_DIR, ".recent_transcripts")
+        current_time = time.time()
+        recent_transcripts = {}
+        
+        # Load recent transcripts
+        if os.path.exists(recent_transcripts_file):
+            try:
+                with open(recent_transcripts_file, 'r') as f:
+                    for line in f:
+                        if line.strip():
+                            saved_time, saved_transcript = line.strip().split('|', 1)
+                            recent_transcripts[saved_transcript] = float(saved_time)
+            except Exception as e:
+                logging.warning(f"Failed to read recent transcripts: {str(e)}")
+        
+        # Clean up old entries (older than 1 minute)
+        recent_transcripts = {
+            t: ts for t, ts in recent_transcripts.items()
+            if current_time - ts < 60
+        }
+        
+        # Check for duplicate
+        if transcript in recent_transcripts:
+            logging.info("Duplicate transcript detected, skipping task creation")
+            return True
+        
+        # Add current transcript to recent list
+        recent_transcripts[transcript] = current_time
+        
+        # Save updated recent transcripts
+        try:
+            with open(recent_transcripts_file, 'w') as f:
+                for t, ts in recent_transcripts.items():
+                    f.write(f"{ts}|{t}\n")
+        except Exception as e:
+            logging.warning(f"Failed to save recent transcripts: {str(e)}")
         
         # Detect relevant tags
         detected_tags = detect_tags(transcript)
@@ -289,6 +327,25 @@ def process_transcript_to_url(transcript_file, url_file):
     except Exception as e:
         logging.error(f"Failed to create OmniFocus URL: {str(e)}")
         return False
+
+def cleanup_files(local_files=None, remote_files=None):
+    """Clean up files both locally and remotely"""
+    if local_files:
+        for file in local_files:
+            try:
+                if os.path.exists(file):
+                    os.remove(file)
+                    logging.info(f"Removed local file: {file}")
+            except Exception as e:
+                logging.error(f"Failed to remove local file {file}: {str(e)}")
+    
+    if remote_files:
+        cleanup_cmd = "rm -f " + " ".join(f"'{f}'" for f in remote_files)
+        success, _ = run_ssh_command(cleanup_cmd)
+        if not success:
+            logging.warning("Failed to clean up remote files")
+        else:
+            logging.info("Cleaned up remote files")
 
 class FileLock:
     """Context manager for file locking to prevent duplicate processing"""
@@ -363,11 +420,16 @@ def process_via_ssh(audio_filename):
             if not process_transcript_to_url(os.path.join(TEMP_DIR, transcript_file), url_file):
                 return False
             
-            # Clean up remote files
-            cleanup_cmd = f"rm -f '{os.path.join(TEMP_DIR, audio_filename)}' '{os.path.join(TEMP_DIR, transcript_file)}'"
-            success, _ = run_ssh_command(cleanup_cmd)
-            if not success:
-                logging.warning("Failed to clean up remote files")
+            # Clean up all files
+            local_files = [
+                os.path.join(TEMP_DIR, transcript_file),
+                url_file
+            ]
+            remote_files = [
+                os.path.join(TEMP_DIR, audio_filename),
+                os.path.join(TEMP_DIR, transcript_file)
+            ]
+            cleanup_files(local_files, remote_files)
             
             return True
             
@@ -390,10 +452,68 @@ def move_to_temp(audio_file: str) -> str:
 def main():
     """Main function to watch for and process recordings."""
     logging.info("Starting recording processor (checking every 5 seconds)")
+    logging.info(f"Monitoring iCloud directory: {ICLOUD_DIR}")
+    logging.info(f"Monitoring remote directory: {TEMP_DIR}")
     
     while True:
         try:
-            # Check for audio files on remote server
+            # First, check iCloud directory for offline recordings
+            for audio_file in glob.glob(AUDIO_FILE_PATTERN):
+                logging.info(f"Found audio file in iCloud: {audio_file}")
+                
+                # Check if the file is still being written to
+                try:
+                    initial_size = os.path.getsize(audio_file)
+                    time.sleep(1)  # Wait a second
+                    if os.path.getsize(audio_file) != initial_size:
+                        logging.info("File is still being written, waiting...")
+                        continue
+                except OSError:
+                    logging.info("File is not accessible, skipping...")
+                    continue
+                
+                if can_connect_ssh():
+                    logging.info("Home network detected, processing iCloud file...")
+                    try:
+                        # Move file to temp directory first
+                        temp_audio_file = move_to_temp(audio_file)
+                        # Get just the filename for the remote path
+                        audio_filename = os.path.basename(temp_audio_file)
+                        
+                        # Copy to remote server
+                        scp_cmd = [
+                            "scp",
+                            "-i", SSH_KEY,
+                            "-o", "BatchMode=yes",
+                            "-o", "StrictHostKeyChecking=no",
+                            "-P", SSH_PORT,
+                            temp_audio_file,
+                            f"{SSH_USER}@{SSH_HOST}:{os.path.join(TEMP_DIR, audio_filename)}"
+                        ]
+                        subprocess.run(scp_cmd, check=True, capture_output=True, text=True)
+                        
+                        if process_via_ssh(audio_filename):
+                            logging.info("Processing complete")
+                            # Cleanup local temp file
+                            try:
+                                os.remove(temp_audio_file)
+                                logging.info("Removed local temp file")
+                            except Exception as e:
+                                logging.error(f"Failed to remove local temp file: {str(e)}")
+                        else:
+                            logging.error("Processing failed")
+                            # Move file back to iCloud if processing failed
+                            try:
+                                shutil.move(temp_audio_file, audio_file)
+                                logging.info("Moved file back to iCloud for retry")
+                            except Exception as e:
+                                logging.error(f"Failed to move file back to iCloud: {str(e)}")
+                    except Exception as e:
+                        logging.error(f"Error during processing: {str(e)}")
+                else:
+                    logging.info("Not on home network, leaving file in iCloud for later")
+            
+            # Then check remote directory for direct SSH recordings
             check_cmd = f"ls -1 {os.path.join(TEMP_DIR, 'audio_recording_*.m4a')} 2>/dev/null || true"
             success, output = run_ssh_command(check_cmd)
             
