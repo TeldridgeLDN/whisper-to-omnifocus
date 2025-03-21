@@ -8,9 +8,12 @@ A powerful integration that converts voice commands into OmniFocus tasks using O
 - 🔄 **Offline Support**: Record tasks without network connection
 - ⚡ **Automatic Sync**: Process offline recordings when back online
 - 🎯 **Smart Parsing**: Automatically extracts task details from voice commands
+- 📅 **Date/Time Understanding**: Intelligently parses natural language dates and times
+- 🏷️ **Automatic Tagging**: Detects and applies relevant tags based on context
 - 🔍 **Flexible Commands**: Support for projects, due dates, defer dates, flags, and tags
 - 📱 **iOS Integration**: Works seamlessly with iOS Shortcuts
 - 🔄 **Background Processing**: Automatic task creation in OmniFocus
+- 🛡️ **Robust Processing**: Duplicate detection and error recovery built-in
 
 ## 🚀 Quick Start
 
@@ -40,6 +43,21 @@ A powerful integration that converts voice commands into OmniFocus tasks using O
 Create a task to buy groceries tomorrow
 ```
 
+### Time-Specific Task
+```
+Remind me to call John at 3pm
+```
+
+### Date and Time Task
+```
+Schedule team meeting for next Friday at 2:30pm
+```
+
+### Tagged Task
+```
+Write documentation for the project with coding and admin tags
+```
+
 ### Complex Task
 ```
 Create a task to finish the project report due next Friday at 5pm in the Work project with high priority and tags for documentation and urgent
@@ -52,6 +70,7 @@ Create a task to finish the project report due next Friday at 5pm in the Work pr
 - macOS Shortcuts
 - Automator
 - OmniFocus URL Scheme
+- python-dateutil
 
 ## 📋 Requirements
 
@@ -60,6 +79,8 @@ Create a task to finish the project report due next Friday at 5pm in the Work pr
 - Python 3.10 or later
 - OmniFocus 3
 - iCloud Drive enabled
+- python-dateutil library
+- ffmpeg (installed automatically)
 
 ## 📱 Platform Support
 
@@ -72,10 +93,12 @@ Create a task to finish the project report due next Friday at 5pm in the Work pr
 - [Shortcuts Setup](docs/shortcuts.md)
 - [Example Commands](docs/example_commands.md)
 - [Offline Guide](docs/offline_guide.md)
+- [Troubleshooting Guide](docs/troubleshooting.md)
+- [Changelog](CHANGELOG.md)
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to submit a Pull Request. Check our [CHANGELOG.md](CHANGELOG.md) for recent changes and improvements.
 
 ## 📜 License
 
@@ -86,6 +109,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - OpenAI for the Whisper model
 - OmniGroup for OmniFocus
 - Apple for Shortcuts and Automator
+- python-dateutil contributors
 
 ## 🔗 Links
 
