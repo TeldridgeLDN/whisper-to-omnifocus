@@ -6,9 +6,17 @@
     <string>com.whisper.omnifocus.processor</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/bin/python3</string>
-        <string>/Users/tomeldridge/whisper-to-omnifocus/scripts/process_icloud_recording.py</string>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>
+            export PATH="/usr/local/bin:$PATH" &&
+            source "/Users/tomeldridge/Library/Mobile Documents/com~apple~CloudDocs/whisper/whisper-env/bin/activate" &&
+            cd "/Users/tomeldridge/whisper" &&
+            /Users/tomeldridge/whisper-to-omnifocus/scripts/process_icloud_recording.py
+        </string>
     </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/tomeldridge/whisper</string>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
@@ -17,5 +25,12 @@
     <string>/Users/tomeldridge/whisper-logs/processor.err.log</string>
     <key>StandardOutPath</key>
     <string>/Users/tomeldridge/whisper-logs/processor.out.log</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>PYTHONPATH</key>
+        <string>/Users/tomeldridge/Library/Mobile Documents/com~apple~CloudDocs/whisper/whisper-env/lib/python3.10/site-packages</string>
+    </dict>
 </dict>
 </plist> 
