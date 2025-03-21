@@ -25,16 +25,16 @@ log_dir = Path(os.getenv("WHISPER_LOG_DIR", "~/whisper-logs")).expanduser()
 log_dir.mkdir(parents=True, exist_ok=True)
 log_file = log_dir / f"icloud_sync_{datetime.now().strftime('%Y%m%d')}.log"
 
-# Configuration
-SSH_HOST = "192.168.86.36"
-SSH_PORT = "22"
-SSH_USER = "tomeldridge"
-SSH_KEY = os.path.expanduser("~/.ssh/whisper_automation")
+# Configuration from environment variables
+SSH_HOST = os.getenv("WHISPER_SSH_HOST", "localhost")
+SSH_PORT = os.getenv("WHISPER_SSH_PORT", "22")
+SSH_USER = os.getenv("WHISPER_SSH_USER", os.getenv("USER"))
+SSH_KEY = os.path.expanduser(os.getenv("WHISPER_SSH_KEY", "~/.ssh/id_ed25519"))
 
 # Paths matching the shortcut configuration
-WHISPER_BASE = os.path.expanduser("~/whisper")
+WHISPER_BASE = os.path.expanduser(os.getenv("WHISPER_BASE", "~/whisper"))
 TEMP_DIR = os.path.join(WHISPER_BASE, "temp")
-ICLOUD_DIR = os.path.expanduser("~/Library/Mobile Documents/com~apple~CloudDocs/Whisper-local")
+ICLOUD_DIR = os.path.expanduser(os.getenv("WHISPER_ICLOUD_DIR", "~/Library/Mobile Documents/com~apple~CloudDocs/Whisper-local"))
 AUDIO_FILE_PATTERN = os.path.join(ICLOUD_DIR, "audio_recording_*.m4a")
 TRANSCRIPT_FILE = os.path.join(TEMP_DIR, "whisper_transcript.txt")
 OMNIFOCUS_URL_FILE = TRANSCRIPT_FILE + "_url"

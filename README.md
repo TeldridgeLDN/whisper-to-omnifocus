@@ -22,16 +22,24 @@ A powerful integration that converts voice commands into OmniFocus tasks using O
    ./install.sh
    ```
 
-2. **Set Up Shortcuts**:
+2. **Configure Environment**:
+   - Copy `.env.template` to `~/.whisper-to-omnifocus.env`
+   - Update the environment variables with your settings:
+     ```bash
+     cp .env.template ~/.whisper-to-omnifocus.env
+     nano ~/.whisper-to-omnifocus.env
+     ```
+
+3. **Set Up Shortcuts**:
    - Install the "Voice to Task" shortcut for online use
    - Install the "Offline Voice to Task" shortcut for offline recording
    - Follow the setup guide in `docs/shortcuts.md`
 
-3. **Configure Automator**:
+4. **Configure Automator**:
    - Set up the folder action to watch the temp directory
    - Follow the setup guide in `docs/configuration.md`
 
-4. **Start Processing**:
+5. **Start Processing**:
    ```bash
    ./scripts/process_icloud_recording.py
    ```

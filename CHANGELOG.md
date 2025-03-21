@@ -16,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for multiple simultaneous recordings with timestamped filenames
 - Date and time parsing for task due dates
 - Automatic ffmpeg installation on remote server
+- Added FileLock class back to prevent duplicate processing
+- Added duplicate detection for transcripts within a one-minute window
+- Added proper cleanup of temporary files after processing
+- Added better error handling for file operations
+- Added file existence verification at each step of processing
+- Added detailed error logging for file operations
+- Added environment variable configuration with template
+- Added documentation for environment setup
 
 ### Fixed
 - Fixed path resolution for process_recording.py script
@@ -24,6 +32,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed file cleanup after successful processing
 - Fixed SSH key authentication issues
 - Fixed ffmpeg dependency issues on remote server
+- Fixed issue with duplicate task creation in OmniFocus
+- Fixed error handling for file operations
+- Fixed error when removing already cleaned up temporary files
+- Fixed "Bad file descriptor" error by moving cleanup after FileLock release
+- Fixed redundant file cleanup attempt causing "No such file" error
+- Fixed error handling for transcription and file transfer failures
+- Removed hardcoded personal details in favor of environment variables
 
 ### Changed
 - Updated documentation to include offline workflow
@@ -32,6 +47,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switched to direct SSH file transfer instead of iCloud sync
 - Improved file naming with timestamps to prevent conflicts
 - Enhanced error handling for SSH operations
+- Improved logging for file operations and processing steps
+- Enhanced error messages for better debugging
+- Updated file handling logic to be more robust
+- Improved error recovery to preserve audio files for retry
+- Moved configuration to environment variables
+- Updated documentation with environment setup instructions
 
 ## [0.1.0] - 2024-03-21
 
