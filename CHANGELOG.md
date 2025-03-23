@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added detailed error logging for file operations
 - Added environment variable configuration with template
 - Added documentation for environment setup
+- Added bullet point support in task notes using "bullet" keyword
+- Added smart note parsing with multiple trigger phrases ("with note:", "add note:", etc.)
+- Added support for structured lists in task notes
+- Added automatic bullet point formatting with proper symbols
+- Added duplicate bullet point detection and cleanup
 
 ### Fixed
 - Fixed path resolution for process_recording.py script
@@ -39,6 +44,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed redundant file cleanup attempt causing "No such file" error
 - Fixed error handling for transcription and file transfer failures
 - Removed hardcoded personal details in favor of environment variables
+- Fixed bullet point formatting to remove trailing "bullet" words
+- Fixed comma separation issues in bullet point lists
+- Fixed note content parsing to better handle periods and punctuation
 
 ### Changed
 - Updated documentation to include offline workflow
@@ -53,6 +61,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved error recovery to preserve audio files for retry
 - Moved configuration to environment variables
 - Updated documentation with environment setup instructions
+- Enhanced note handling with cleaner bullet point formatting
+- Improved text cleanup for better readability
+- Updated bullet point parsing to handle various input formats
 
 ## [0.1.0] - 2024-03-21
 

@@ -11,6 +11,8 @@ A powerful integration that converts voice commands into OmniFocus tasks using O
 - 📅 **Date/Time Understanding**: Intelligently parses natural language dates and times
 - 🏷️ **Automatic Tagging**: Detects and applies relevant tags based on context
 - 🔍 **Flexible Commands**: Support for projects, due dates, defer dates, flags, and tags
+- 📝 **Structured Notes**: Create formatted bullet point lists in task notes
+- 🔄 **Smart Formatting**: Automatic bullet point formatting and cleanup
 - 📱 **iOS Integration**: Works seamlessly with iOS Shortcuts
 - 🔄 **Background Processing**: Automatic task creation in OmniFocus
 - 🛡️ **Robust Processing**: Duplicate detection and error recovery built-in
@@ -66,9 +68,19 @@ Schedule team meeting for next Friday at 2:30pm
 Write documentation for the project with coding and admin tags
 ```
 
-### Complex Task
+### Task with Bullet Points
 ```
-Create a task to finish the project report due next Friday at 5pm in the Work project with high priority and tags for documentation and urgent
+Create a task Review Project with note: check progress bullet update timeline bullet schedule meeting bullet
+```
+
+### Shopping List
+```
+Groceries list: apples bullet bananas bullet milk bullet bread bullet
+```
+
+### Complex Task with Notes
+```
+Plan weekly review in the Work folder with note: review calendar bullet check emails bullet plan next week bullet update status bullet
 ```
 
 ## 🛠️ Technologies
