@@ -29,6 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for structured lists in task notes
 - Added automatic bullet point formatting with proper symbols
 - Added duplicate bullet point detection and cleanup
+- Added automatic grocery item detection
+- Added automatic "Location : Sainsbury" tag for grocery lists
+- Added comprehensive grocery item database with categories
 
 ### Fixed
 - Fixed path resolution for process_recording.py script
